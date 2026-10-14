@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unity RE Web — workbench</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      background: #0d1117; color: #e6edf3;
+      font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 24px 16px;
+    }
+    h1 { font-size: 1.3rem; font-weight: 600; margin: 8px 0 2px; }
+    .sub { color: #8b949e; font-size: .85rem; margin-bottom: 24px; }
+    #drop {
+      width: 100%; max-width: 640px; min-height: 180px;
+      border: 2px dashed #30363d; border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px; cursor: pointer; transition: border-color .15s, background .15s;
+      text-align: center; padding: 20px;
+    }
+    #drop.over { border-color: #58a6ff; background: #161b22; }
+    #drop .big { font-size: 1rem; }
+    #drop .hint { color: #8b949e; font-size: .8rem; }
+    #results { width: 100%; max-width: 640px; margin-top: 20px; }
+    .card {
+      background: #161b22; border: 1px solid #30363d; border-radius: 10px;
+      padding: 14px 16px; margin-bottom: 12px;
+    }
+    .card h2 { font-size: .95rem; margin: 0 0 10px; color: #58a6ff; }
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    td { padding: 3px 0; vertical-align: top; }
+    td.k { color: #8b949e; width: 40%; }
+    td.v { color: #e6edf3; word-break: break-all; }
+    .err { color: #f85149; }
+    .ok  { color: #3fb950; }
+  </style>
+</head>
+<body>
+  <h1>Unity RE Web</h1>
+  <div class="sub">v0.1 — drop a file, we tell you what it is</div>
+
+  <div id="drop">
+    <div class="big">Drop file here / Нажми, чтобы выбрать</div>
+    <div class="hint">.ipa · .apk · *.bundle · *.unity3d · assets · global-metadata.dat</div>
+    <input type="file" id="file" hidden />
+  </div>
+
+  <div id="results"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
