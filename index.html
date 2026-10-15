@@ -38,6 +38,13 @@
     td.v { color: #e6edf3; word-break: break-all; }
     .err { color: #f85149; }
     .ok  { color: #3fb950; }
+    #log {
+      width: 100%; max-width: 640px; margin-top: 24px;
+      background: #010409; border: 1px solid #21262d; border-radius: 10px;
+      font-size: 11px; line-height: 1.5; color: #7ee787;
+      padding: 10px 12px; max-height: 30vh; overflow-y: auto;
+      white-space: pre-wrap; word-break: break-all;
+    }
   </style>
 </head>
 <body>
@@ -51,6 +58,7 @@
   </div>
 
   <div id="results"></div>
+  <div id="log"></div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

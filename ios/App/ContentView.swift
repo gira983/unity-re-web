@@ -30,7 +30,21 @@ struct ContentView: UIViewRepresentable {
             guard message.name == "openFilePicker" else { return }
             let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.data], asCopy: true)
             picker.delegate = self
-            Self.topViewController().present(picker, animated: true)
+            // responder chain first — most reliable host VC on any iOS version
+            var host: UIViewController?
+            if let web = webView, let next = web.next {
+                host = Self.viewController(for: next)
+            }
+            (host ?? Self.topViewController()).present(picker, animated: true)
+        }
+
+        static func viewController(for first: UIResponder) -> UIViewController? {
+            var responder: UIResponder? = first
+            while let r = responder {
+                if let vc = r as? UIViewController { return vc }
+                responder = r.next
+            }
+            return nil
         }
 
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
