@@ -8,14 +8,15 @@ final class FileBridge: NSObject, WKURLSchemeHandler {
     private static var files: [String: URL] = [:]
 
     static func register(_ url: URL) -> String {
-        let token = UUID().uuidString
+        // URL.host comes back lowercased, so tokens must be lowercase to match
+        let token = UUID().uuidString.lowercased()
         files[token] = url
         return token
     }
 
     func webView(_ webView: WKWebView, start task: WKURLSchemeTask) {
         guard let url = task.request.url,
-              let token = url.host,
+              let token = url.host?.lowercased(),
               let fileURL = FileBridge.files[token] else {
             task.didFailWithError(URLError(.badURL))
             return

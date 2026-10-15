@@ -1,7 +1,7 @@
 {
   "name": "unity-re-web",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.2",
   "type": "module",
   "description": "Web-based Unity reverse engineering workbench — works in any browser, including iOS",
   "scripts": {

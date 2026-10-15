@@ -8,6 +8,9 @@ const results = document.getElementById("results") as HTMLDivElement;
 const nativePicker = (window as unknown as Record<string, { messageHandlers: Record<string, unknown> }> | undefined)
   ?.webkit?.messageHandlers?.["openFilePicker"] as { postMessage: (m: unknown) => void } | undefined;
 
+const status = document.getElementById("status");
+if (status) status.textContent += nativePicker ? " · native bridge ✓" : " · browser mode";
+
 drop.addEventListener("click", () => {
   if (nativePicker) { nativePicker.postMessage(null); return; }
   fileInput.click();
