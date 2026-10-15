@@ -13,7 +13,7 @@ final class FileBridge: NSObject, WKURLSchemeHandler {
         return token
     }
 
-    func webView(_ webView: WKWebView, start task: URLSchemeTask) {
+    func webView(_ webView: WKWebView, start task: WKURLSchemeTask) {
         guard let url = task.request.url,
               let token = url.host,
               let fileURL = FileBridge.files[token] else {
@@ -34,5 +34,5 @@ final class FileBridge: NSObject, WKURLSchemeHandler {
         task.didFinish()
     }
 
-    func webView(_ webView: WKWebView, stop task: URLSchemeTask) {}
+    func webView(_ webView: WKWebView, stop task: WKURLSchemeTask) {}
 }

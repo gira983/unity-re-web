@@ -8,8 +8,10 @@ struct ContentView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
         config.setURLSchemeHandler(FileBridge(), forURLScheme: FileBridge.scheme)
+        // the web app posts "openFilePicker" here instead of clicking <input type=file>,
+        // which cannot open a picker inside WKWebView before iOS 18.4
+        config.userContentController.add(context.coordinator, name: "openFilePicker")
         let web = WKWebView(frame: .zero, configuration: config)
-        web.uiDelegate = context.coordinator
         context.coordinator.webView = web
         // "Web" is a folder reference: the vite build is copied here by CI
         if let index = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "Web") {
@@ -20,25 +22,18 @@ struct ContentView: UIViewRepresentable {
 
     func updateUIView(_ uiView: WKWebView, context: Context) {}
 
-    final class Coordinator: NSObject, WKUIDelegate, UIDocumentPickerDelegate {
+    final class Coordinator: NSObject, WKScriptMessageHandler, UIDocumentPickerDelegate {
         weak var webView: WKWebView?
-        private var openPanelCompletion: (([URL]?) -> Void)?
 
-        // <input type="file"> does nothing inside WKWebView unless the app
-        // implements the open panel delegate and presents a picker itself
-        func webView(_ webView: WKWebView, runOpenPanelWith parameters: WKOpenPanelParameters,
-                     initiatedByFrame frame: WKFrameInfo,
-                     completionHandler: @escaping ([URL]?) -> Void) {
-            openPanelCompletion = completionHandler
+        func userContentController(_ userContentController: WKUserContentController,
+                                   didReceive message: WKScriptMessage) {
+            guard message.name == "openFilePicker" else { return }
             let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.data], asCopy: true)
-            picker.allowsMultipleSelection = parameters.allowsMultipleSelection
             picker.delegate = self
             Self.topViewController().present(picker, animated: true)
         }
 
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-            openPanelCompletion?(nil)
-            openPanelCompletion = nil
             let payload: [String: Any] = [
                 "tokens": urls.map { FileBridge.register($0) },
                 "names": urls.map { $0.lastPathComponent },
@@ -46,11 +41,6 @@ struct ContentView: UIViewRepresentable {
             guard let data = try? JSONSerialization.data(withJSONObject: payload),
                   let json = String(data: data, encoding: .utf8) else { return }
             webView?.evaluateJavaScript("window.__nativeFilesPicked(\(json))", completionHandler: nil)
-        }
-
-        func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-            openPanelCompletion?(nil)
-            openPanelCompletion = nil
         }
 
         static func topViewController() -> UIViewController {

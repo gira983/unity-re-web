@@ -4,7 +4,14 @@ const drop = document.getElementById("drop") as HTMLDivElement;
 const fileInput = document.getElementById("file") as HTMLInputElement;
 const results = document.getElementById("results") as HTMLDivElement;
 
-drop.addEventListener("click", () => fileInput.click());
+// inside the iOS shell the picker is opened through a native message
+const nativePicker = (window as unknown as Record<string, { messageHandlers: Record<string, unknown> }> | undefined)
+  ?.webkit?.messageHandlers?.["openFilePicker"] as { postMessage: (m: unknown) => void } | undefined;
+
+drop.addEventListener("click", () => {
+  if (nativePicker) { nativePicker.postMessage(null); return; }
+  fileInput.click();
+});
 fileInput.addEventListener("change", () => {
   if (fileInput.files?.[0]) handleFile(fileInput.files[0]);
 });
