@@ -1,3 +1,8 @@
 node_modules/
 dist/
 *.log
+ios/App/Web/
+ios/build/
+ios/UnityRE.xcodeproj/
+ios/Payload/
+ios/*.ipa

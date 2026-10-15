@@ -24,6 +24,15 @@ npm run dev
 Откроется на `http://localhost:5173`. Для теста подойдёт любой Unity-бандл
 (`*.bundle`, `*.unity3d`, `assets`) или `global-metadata.dat` из игры.
 
+## iPhone-приложение (.ipa)
+
+CI (`ios-build.yml`) на macOS-раннере GitHub собирает **unsigned .ipa**:
+веб-UI билдится в `dist/`, копируется в `ios/App/Web/`, xcodegen генерирует проект,
+xcodebuild собирает `UnityRE.app` без подписи → артефакт `UnityRE-unsigned-ipa`.
+
+Установка: скачай артефакт → распакуй → открой `.ipa` через **TrollStore**
+(или SideStore/AltStore с бесплатным Apple ID).
+
 ## Лицензия
 
 GPL-3.0. Ядро v0.4 будет портом [Il2CppDumper](https://github.com/Perfare/Il2CppDumper) (GPL-3.0) —

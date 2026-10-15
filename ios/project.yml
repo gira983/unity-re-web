@@ -1,0 +1,45 @@
+name: UnityRE
+options:
+  bundleIdPrefix: com.gira983
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: ""
+    DEVELOPMENT_TEAM: ""
+
+targets:
+  UnityRE:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+        excludes:
+          - "Web/**"
+      - path: App/Web
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.gira983.unityre
+        PRODUCT_NAME: UnityRE
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_VERSION: "5.9"
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: UnityRE
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+
+schemes:
+  UnityRE:
+    build:
+      targets:
+        UnityRE: all

@@ -1,0 +1,46 @@
+name: ios-build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build web UI
+        run: |
+          npm ci
+          npm run build
+          rm -rf ios/App/Web
+          mkdir -p ios/App/Web
+          cp -r dist/* ios/App/Web/
+
+      - name: Generate Xcode project
+        run: |
+          brew install xcodegen
+          cd ios
+          xcodegen generate
+
+      - name: Build unsigned IPA
+        run: |
+          cd ios
+          xcodebuild -project UnityRE.xcodeproj -scheme UnityRE \
+            -configuration Release -destination 'generic/platform=iOS' \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" QUIET=YES
+          rm -rf Payload
+          mkdir Payload
+          cp -r build/Build/Products/Release-iphoneos/UnityRE.app Payload/
+          zip -qry UnityRE-unsigned.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: UnityRE-unsigned-ipa
+          path: ios/UnityRE-unsigned.ipa
